@@ -1,4 +1,6 @@
 const bodyParser = require("body-parser");
+const path = require('path');
+
 const mongoose = require("mongoose");
 const express = require("express");
 const _ = require("lodash");
@@ -44,6 +46,7 @@ const List = mongoose.model("List", listSchema);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
+app.set('views', path.join(__dirname, 'Views'));  
 
 app.set('view engine', 'ejs');
 // adding new item
