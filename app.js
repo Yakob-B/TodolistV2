@@ -2,8 +2,19 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const express = require("express");
 const _ = require("lodash");
-
 const app = express();
+ const http = require('http');
+ 
+
+
+ const server = http.createServer(app);
+
+ server.keepAliveTimeout = 120000; // 120 seconds
+ server.headersTimeout = 120000;  // 120 seconds
+
+
+
+ 
 
 mongoose.connect("mongodb+srv://yakoba:mongocluster@cluster0.yzelo.mongodb.net/TodolistDB?retryWrites=true&w=majority&appName=Cluster0");
 
@@ -149,7 +160,24 @@ app.get("/about", function (req, res) {
 
 })
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, function () {
-    console.log("Server started at port 3000 Or" + PORT);
+// const PORT = process.env.PORT || 3000;
+// app.listen(PORT, function () {
+//     console.log("Server started at port 3000 Or" + PORT);
+// });
+
+const PORT = process.env.PORT || 10000; // Default port is 10000
+const HOST = '0.0.0.0';
+
+app.listen(PORT, HOST, () => {
+  console.log(`Server is running on http://${HOST}:${PORT}`);
 });
+
+// Graceful shutdown for SIGTERM
+process.on('SIGTERM', () => {
+    console.log('SIGTERM signal received: closing HTTP server...');
+    server.close(() => {
+      console.log('HTTP server closed.');
+      process.exit(0);
+    });
+  });
+
